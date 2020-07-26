@@ -5,27 +5,28 @@ public class MatrizInversa {
     double matrizIdentidade[][];
     double matriz[][];
     
-    MatrizInversa(float matrizOriginal[][]){
+    MatrizInversa(double matrizOriginal[][]){
         TAM = matrizOriginal.length;
-    }
-
-    public double[][] calculaMatrizInversa(float matrizOriginal[][]){
-        double m;
-        double pivo;
-        double determinante =0;
         double matrizIdentidade[][] = new double[TAM][TAM];
         double matriz[][] = new double[TAM][TAM];
 
-    for(int i = 0; i < TAM; i++) {
-        for(int j = 0; j < TAM; j++) {
-            matriz[i][j] = matrizOriginal[i][j];
-            if (i == j){
-                matrizIdentidade[i][j] = 1;
-            }else{
-                matrizIdentidade[i][j] = 0;
+        for(int i = 0; i < TAM; i++) {
+            for(int j = 0; j < TAM; j++) {
+                matriz[i][j] = matrizOriginal[i][j];
+                if (i == j){
+                    matrizIdentidade[i][j] = 1;
+                }else{
+                    matrizIdentidade[i][j] = 0;
+                }
             }
         }
     }
+
+    public double[][] calculaMatrizInversa(){
+        double m;
+        double pivo;
+        double determinante =0;
+
 
     if (TAM == 1){
         determinante = determinante1x1(matriz);
