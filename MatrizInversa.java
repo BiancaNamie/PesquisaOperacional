@@ -4,9 +4,9 @@ public class MatrizInversa {
     int TAM;
     double matrizIdentidade[][];
     double matriz[][];
-    
-    MatrizInversa(double matrizOriginal[][]){
-        TAM = matrizOriginal.length;
+
+    public double[][] calculaMatrizInversa(double matrizOriginal[][]){
+                TAM = matrizOriginal.length;
         double matrizIdentidade[][] = new double[TAM][TAM];
         double matriz[][] = new double[TAM][TAM];
 
@@ -20,15 +20,11 @@ public class MatrizInversa {
                 }
             }
         }
-    }
-
-    public double[][] calculaMatrizInversa(){
         double m;
         double pivo;
         double determinante =0;
 
-
-    if (TAM == 1){
+    if (TAM == 1){ 
         determinante = determinante1x1(matriz);
     }else if (TAM == 2){
         determinante = determinante2x2(matriz);
