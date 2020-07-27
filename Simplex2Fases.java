@@ -209,11 +209,11 @@ public class Simplex2Fases {
             // -> Passo 4 calculo da direcao simplex
             double y[][] = new double[quantidadeRestricoes][1];
             double aNk[][] = new double[quantidadeRestricoes][1];
-            for (int i = 0; i < quantidadeVariaveis; i++) {
+            //for (int i = 0; i < quantidadeVariaveis; i++) {
                 for (int j = 0; j < quantidadeRestricoes; j++) {
-                    aNk[j][0] = matriz_A[j][particaoNaoBasica[i]];
+                    aNk[j][0] = matriz_A[j][particaoNaoBasica[entraNaBase]];
                 }
-            }
+            //}
             y = multiplicaMatriz(matrizInversa, aNk);
 
             // -> Passo 5 determinacao do passo e variavel a sair da base
@@ -222,7 +222,7 @@ public class Simplex2Fases {
             for (int i = 0; i < quantidadeRestricoes; i++) {
                 if (y[i][0] > 0) {
                     razaoMinima[i] = xb[i][0] / y[i][0];
-                System.out.println("Raz min de " + i+" = " + razaoMinima[i]);
+                    System.out.println("Raz min de " + i+" = " + razaoMinima[i] + " y= " + y[i][0]);
                     if (razaoMinima[i] > 0) {
                         if (saiDaBase == -1) {
                             saiDaBase = i;
