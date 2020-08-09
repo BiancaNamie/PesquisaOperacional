@@ -1,3 +1,4 @@
+
 public class Simplex2Fases {
     int quantidadeVariaveis, quantidadeRestricoes, TAM_FolgaExcesso;
     double funcObj[];
@@ -55,7 +56,6 @@ public class Simplex2Fases {
                 flag = true;
             }
         }
-
         this.funcObj = new double[quantidadeVariaveis + TAM_FolgaExcesso];
 
         if (maxMin.equalsIgnoreCase("max")) {
@@ -228,28 +228,31 @@ public class Simplex2Fases {
             // ->2.1
             double lambda[][] = multiplicaMatriz(cTB, matrizInversa);
             // ->2.2 custos relativos
-            double cNj[] = new double[quantidadeVariaveis];
-            for (int i = 0; i < quantidadeVariaveis; i++) {
+            double cNj[] = new double[quantidadeVariaveis+TAM_FolgaExcesso];
+            for (int i = 0; i < quantidadeVariaveis+TAM_FolgaExcesso; i++) {
                 double aux[][] = new double[quantidadeRestricoes][1];
                 for (int j = 0; j < quantidadeRestricoes; j++) {
                     aux[j][0] = newMatrizA[j][particaoNaoBasicaA[i]];
                 }
-                // System.out.println();
                 double aux2[][] = multiplicaMatriz(lambda, aux);
                 cNj[i] = newFuncObjetivo[particaoNaoBasicaA[i]] - aux2[0][0];
             }
             // ->2.3
-            int entraNaBase = 0;
-            for (int i = 1; i < quantidadeVariaveis; i++) {
-                if (cNj[i] < cNj[entraNaBase]) {
-                    entraNaBase = i;
+            int entraNaBase = -1;
+            for (int i = 0; i < quantidadeVariaveis+TAM_FolgaExcesso; i++) {
+                if (cNj[i] < 0){
+                    if(entraNaBase == -1){
+                        entraNaBase = i;
+                    }else if (cNj[i] < cNj[entraNaBase]) {
+                        entraNaBase = i;
+                    }
                 }
             }
             System.out.println("Entra na base: " + entraNaBase);
             // -> Passo 3
-            if (cNj[entraNaBase] >= 0) {
-                for (int i = 0; i < quantidadeRestricoes; i++) {
-                    if (particaoBasicaA[i] > quantidadeVariaveis + TAM_FolgaExcesso) {
+            if (entraNaBase == -1) {
+                for (int i = 0; i < quantidadeRestricoes; i++){
+                    if (particaoBasicaA[i] >= quantidadeVariaveis + TAM_FolgaExcesso) {
                         infactibilidade = true;
                     }
                 }
@@ -276,11 +279,9 @@ public class Simplex2Fases {
             // -> Passo 4 calculo da direcao simplex
             double y[][] = new double[quantidadeRestricoes][1];
             double aNk[][] = new double[quantidadeRestricoes][1];
-            // for (int i = 0; i < quantidadeVariaveis; i++) {
             for (int j = 0; j < quantidadeRestricoes; j++) {
                 aNk[j][0] = newMatrizA[j][particaoNaoBasicaA[entraNaBase]];
             }
-            // }
             y = multiplicaMatriz(matrizInversa, aNk);
 
             // -> Passo 5 determinacao do passo e variavel a sair da base
@@ -289,7 +290,7 @@ public class Simplex2Fases {
             for (int i = 0; i < quantidadeRestricoes; i++) {
                 if (y[i][0] > 0) {
                     razaoMinima[i] = xb[i][0] / y[i][0];
-                    if (razaoMinima[i] > 0) {
+                    if (razaoMinima[i] >= 0) {
                         if (saiDaBase == -1) {
                             saiDaBase = i;
                         } else if (razaoMinima[i] < razaoMinima[saiDaBase]) {
@@ -317,13 +318,10 @@ public class Simplex2Fases {
             }
             iteracao++;
             System.out.println("Iteracao: " + iteracao);
-            if (Iteracao > 5) {
-                break;
-            }
         }
     }
 
-    public double[][] FaseII() {
+    public void FaseII() {
         while (true) {
             // ->Passo 1
             MatrizInversa mi = new MatrizInversa();
@@ -363,15 +361,27 @@ public class Simplex2Fases {
                 cNj[i] = funcObj[particaoNaoBasica[i]] - aux2[0][0];
             }
             // ->2.3
-            int entraNaBase = 0;
-            for (int i = 1; i < quantidadeVariaveis; i++) {
-                if (cNj[i] < cNj[entraNaBase]) {
-                    entraNaBase = i;
+            int entraNaBase = -1;
+            for (int i = 0; i < quantidadeVariaveis; i++) {
+                if (cNj[i] < 0){
+                    if(entraNaBase == -1){
+                        entraNaBase = i;
+                    }else if (cNj[i] < cNj[entraNaBase]) {
+                        entraNaBase = i;
+                    }
                 }
             }
+
+            System.out.println("Entra na base: " + entraNaBase);
             // -> Passo 3
-            if (cNj[entraNaBase] >= 0) {
-                if (cNj[entraNaBase] == 0) {
+            if (entraNaBase == -1) {
+                boolean inf = false;
+                for (int i = 0; i < cNj.length; i++) {
+                    if (cNj[i] == 0){
+                        inf = true;
+                    }
+                }
+                if (inf == true) {
                     System.out.println("Infinitas solucoes otimas");
                 } else {
                     System.out.println("Solucao otima");
@@ -407,7 +417,7 @@ public class Simplex2Fases {
             for (int i = 0; i < quantidadeRestricoes; i++) {
                 if (y[i][0] > 0) {
                     razaoMinima[i] = xb[i][0] / y[i][0];
-                    if (razaoMinima[i] > 0) {
+                    if (razaoMinima[i] >= 0) {
                         if (saiDaBase == -1) {
                             saiDaBase = i;
                         } else if (razaoMinima[i] < razaoMinima[saiDaBase]) {
@@ -435,7 +445,6 @@ public class Simplex2Fases {
             iteracao++;
             System.out.println("Iteracao: " + iteracao);
         }
-        return matriz_A;
     }
 
     private static void inverteSinalLinha(double matriz[][], int linha) {
